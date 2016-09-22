@@ -1,0 +1,16 @@
+{
+  "name": "theshadowx",
+  "version": "0.0.1",
+  "description": "deploying node js to heroku platform",
+  "main": "server.js",
+  "author": {
+    "name": "Ali Diouri"
+  },
+  "engines": {
+    "node": "4.4.x",
+    "npm": "3.8.x"
+  },
+  "dependencies": {
+    "express": "4.13.x"
+  }
+}
