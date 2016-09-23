@@ -1,5 +1,5 @@
 <!DOCTYPE>
-<html ng-app>
+<html ng-app="myApp">
 <head>
     <title> Contact list App</title>
     <!-- Latest compiled and minified CSS -->
@@ -9,12 +9,36 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 </head>
 <body>
-    <div class="container">
-    <h1> Testing horeku</h1>
+    <div class="container" ng-controller="AppCtrl">
+        <h1> Testing heroku</h1>
+        <table class="table">
+        <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Number</th>  
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><input class="form-control" ng-model="contact.name"></td>
+                <td><input class="form-control" ng-model="contact.email"></td>
+                <td><input class="form-control" ng-model="contact.number"></td>
+                <td><button class="btn btn-primary" ng-click="addContact()">Add Contact</button></td>
+            </tr>
+            <tr ng-repeat="contact in contactList">
+                <td>{{contact.name}}</td>
+                <td>{{contact.email}}</td>
+                <td>{{contact.number}}</td>
+            </tr>
+        </tbody>
+        </table>
     </div>
 
 
 
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script type="text/javascript" src="Controller/controller.js"></script>
 </body>
 </html>
