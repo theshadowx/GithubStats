@@ -1,4 +1,11 @@
-var myApp = angular.module('myApp',[]);
+'use strict';
+
+var myApp = angular.module('myApp',['ngMaterial']);
+
+myApp.config(function($mdThemingProvider) {
+    $mdThemingProvider.theme('input');
+    $mdThemingProvider.theme('docs-dark', 'default')
+});
 
 myApp.factory('socket', ['$rootScope', function($rootScope) {
     var socket = io();
@@ -6,8 +13,17 @@ myApp.factory('socket', ['$rootScope', function($rootScope) {
 }]);
 
 
-myApp.controller('AppCtrl', ['$scope', '$http', 'socket', function($scope, $http, socket){
+myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidenav', function($scope, $http, socket, $timeout, $mdSidenav){
     console.log("hi there");
+
+    $scope.toggleLeft = buildToggler('left');
+    $scope.toggleRight = buildToggler('right');
+
+    function buildToggler(componentId) {
+      return function() {
+        $mdSidenav(componentId).toggle();
+      }
+    }
 
     $scope.contactList=[];
 

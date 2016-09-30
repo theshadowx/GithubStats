@@ -1,7 +1,7 @@
 {
   "name": "theshadowx",
   "version": "0.0.1",
-  "description": "deploying node js to heroku platform",
+  "description": "Material MEAN Stack",
   "main": "server.js",
   "author": {
     "name": "Ali Diouri"
@@ -11,8 +11,16 @@
     "npm": "3.8.x"
   },
   "dependencies": {
+    "angular": "^1.5.8",
+    "angular-animate": "^1.5.8",
+    "angular-aria": "^1.5.8",
+    "angular-material": "^1.1.1",
+    "angular-messages": "^1.5.8",
     "body-parser": "^1.15.2",
     "express": "^4.13.4",
+    "lodash": "^4.16.1",
+    "material-design-icons": "^3.0.1",
+    "mdi": "^1.7.22",
     "mongojs": "^2.4.0",
     "socket.io": "^1.4.8"
   }

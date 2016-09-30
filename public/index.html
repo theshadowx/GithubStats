@@ -1,44 +1,107 @@
 <!DOCTYPE>
 <html ng-app="myApp">
 <head>
-    <title> Contact list App</title>
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <title> Material MEAN Stack</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css">
 </head>
-<body>
-    <div class="container" ng-controller="AppCtrl">
-        <h1> Testing heroku</h1>
-        <table class="table">
-        <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Number</th>  
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><input class="form-control" ng-model="contact.name"></td>
-                <td><input class="form-control" ng-model="contact.email"></td>
-                <td><input class="form-control" ng-model="contact.number"></td>
-                <td><button class="btn btn-primary" ng-click="addContact()">Add Contact</button></td>
-            </tr>
-            <tr ng-repeat="contact in contactList">
-                <td>{{contact.name}}</td>
-                <td>{{contact.email}}</td>
-                <td>{{contact.number}}</td>
-            </tr>
-        </tbody>
-        </table>
+
+<body ng-cloak ng-controller="AppCtrl" >
+    
+    <div layout="column" layout-fill>
+        <md-toolbar class="md-raised md-default-theme" md-whiteframe="2">
+            <div class="md-toolbar-tools">
+                <div class="appLogo">
+
+                </div>
+
+                <md-button ng-click="toggleLeft()" class="md-icon-button" aria-label="Open sample menu">
+                    <md-icon aria-label="Menu" class="material-icons">menu</md-icon>
+                </md-button>
+
+                <h3>Material MEAN Stack</h3>
+                <span flex></span>
+            </div>
+        </md-toolbar> 
+
+        <md-content layout-align="center center" flex>
+            <!-- SideNav -->
+            <md-sidenav class="md-sidenav-left" md-component-id="left" md-whiteframe="4">
+                <md-content md-theme="docs-dark" layout-gt-sm="column" layout-padding flex>
+                </md-content>
+            </md-sidenav>
+
+            <div layout="row" layout-align="center center">
+                <md-content layout-padding>
+                    <h1> Contact table</h1>
+                    
+                    <div layout="row" md-theme="docs-dark">
+                        <div>
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label for="input_51">Name</label>
+                                <input required ng-model="contact.name" class="ng-valid md-input ng-touched ng-not-empty ng-dirty ng-valid-parse" id="input_51" aria-invalid="false" style="">
+                                <div class="md-errors-spacer"></div>
+                            </md-input-container>
+                        </div>
+
+                        <div>
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label for="input_51">Email</label>
+                                <input required ng-model="contact.email" class="ng-valid md-input ng-touched ng-not-empty ng-dirty ng-valid-parse" id="input_51" aria-invalid="false" style="">
+                                <div class="md-errors-spacer"></div>
+                            </md-input-container>
+                        </div>
+
+                        <div>
+                            <md-input-container class="md-block" flex-gt-sm>
+                                <label for="input_51">Number</label>
+                                <input required ng-model="contact.number" class="ng-valid md-input ng-touched ng-not-empty ng-dirty ng-valid-parse" id="input_51" aria-invalid="false" style="">
+                                <div class="md-errors-spacer"></div>
+                            </md-input-container>
+                        </div>
+
+                        <div>
+                            <md-button class="md-warn md-raised md-hue-2" ng-click="addContact()">Add Contact</md-button>
+                        </div>
+                    </div>
+                    
+                    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" cellspacing="0" style="width:100%;">
+                        <thead>
+                            <tr>
+                              <th class="mdl-data-table__cell--non-numeric">Name</th>
+                              <th class="mdl-data-table__cell--non-numeric">Email</th>
+                              <th>Number</th>  
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="contact in contactList">
+                                <td class="mdl-data-table__cell--non-numeric">{{contact.name}}</td>
+                                <td class="mdl-data-table__cell--non-numeric">{{contact.email}}</td>
+                                <td>{{contact.number}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </md-content>
+                </div>
+        </md-content>
     </div>
 
 
-
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-    <script type="text/javascript" src="Controller/controller.js"></script>
+    
+    <!-- Angular Material requires Angular.js Libraries -->
+    <script src="/angular/angular.js"></script> 
+    <script src="/angular-aria/angular-aria.js"></script> 
+    <script src="/angular-animate/angular-animate.js"></script> 
+    <script src="/angular-material/angular-material.js"></script> 
+    
+    <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
+    <script src="./Controller/controller.js"></script>
+
+
+
 </body>
 </html>
