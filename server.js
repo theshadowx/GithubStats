@@ -9,7 +9,7 @@ var server = http.Server(app)
 var socketio = require('socket.io');
 var io = socketio.listen(server);
 // MongoDB Docker 
-var databaseurl = process.env.HEROKUDB
+var databaseurl = process.env.HEROKUDB || "172.17.0.1:27017/contactList?autoReconnect=true";
 var mongojs = require('mongojs');
 var db = mongojs(databaseurl)
 // body-parser
@@ -17,13 +17,14 @@ var bodyParser = require('body-parser');
 
 function addContact(nameStr, emailStr, numberStr)
 {
-    db.contactList.save({name: nameStr, email: emailStr, number: numberStr}, function(err, saved) {
+    contactList.save({name: nameStr, email: emailStr, number: numberStr}, function(err, saved) {
         if( err || !saved ) console.log("User not saved");
         else console.log("User saved");
     }); 
 }
 
 db.createCollection("contactList", {});
+var contactList = db.collection('contactList');
 
 db.on('error', function (err) {
     console.log('database error', err);
@@ -36,7 +37,7 @@ db.on('connect', function () {
     app.get('/containerList', function(req, res){
         console.log("received a GET request");
 
-        db.contactList.find(function(err, docs){
+        contactList.find(function(err, docs){
             res.json(docs);
         });
     });
@@ -47,7 +48,7 @@ db.on('connect', function () {
         socket.on('contactAdded', function (data) {
             console.log(JSON.stringify(data, null,'\t'));
             if(data){
-                db.contactList.insert(data);
+                contactList.insert(data);
                 io.emit('updateContactAdded', data);
             }
         });
