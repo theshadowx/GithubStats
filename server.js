@@ -9,7 +9,7 @@ var server = http.Server(app)
 var socketio = require('socket.io');
 var io = socketio.listen(server);
 // MongoDB Docker 
-var databaseurl = "172.17.0.1:27017/contactList?autoReconnect=true";
+var databaseurl = ENV['HEROKUDB'];
 var mongojs = require('mongojs');
 var db = mongojs(databaseurl)
 // body-parser
