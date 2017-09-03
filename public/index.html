@@ -21,8 +21,11 @@
                 <md-button ng-click="toggleLeft()" class="md-icon-button" aria-label="Open sample menu">
                     <md-icon aria-label="Menu" class="material-icons">menu</md-icon>
                 </md-button>
+                
+                <div>
+                    <h4 style="margin: 0px;">Github Stat<span style="font-size: 16px;">&nbsp; {{repoName}} {{releaseTag}}</span></h4>
+                </div>
 
-                <h3>Material MEAN Stack</h3>
                 <span flex></span>
             </div>
         </md-toolbar> 
@@ -36,68 +39,60 @@
 
             <div layout="row" layout-align="center center">
                 <md-content layout-padding>
-                    <h1> Contact table</h1>
-                    
-                    <div layout="row" md-theme="docs-dark">
-                        <div>
-                            <md-input-container class="md-block" flex-gt-sm>
-                                <label for="input_51">Name</label>
-                                <input required ng-model="contact.name" class="ng-valid md-input ng-touched ng-not-empty ng-dirty ng-valid-parse" id="input_51" aria-invalid="false" style="">
-                                <div class="md-errors-spacer"></div>
-                            </md-input-container>
-                        </div>
 
+                    <div layout="row" md-theme="docs-dark" layout-align="center start" >
                         <div>
-                            <md-input-container class="md-block" flex-gt-sm>
-                                <label for="input_51">Email</label>
-                                <input required ng-model="contact.email" class="ng-valid md-input ng-touched ng-not-empty ng-dirty ng-valid-parse" id="input_51" aria-invalid="false" style="">
-                                <div class="md-errors-spacer"></div>
-                            </md-input-container>
-                        </div>
-
-                        <div>
-                            <md-input-container class="md-block" flex-gt-sm>
-                                <label for="input_51">Number</label>
-                                <input required ng-model="contact.number" class="ng-valid md-input ng-touched ng-not-empty ng-dirty ng-valid-parse" id="input_51" aria-invalid="false" style="">
-                                <div class="md-errors-spacer"></div>
-                            </md-input-container>
-                        </div>
-
-                        <div>
-                            <md-button class="md-warn md-raised md-hue-2" ng-click="addContact()">Add Contact</md-button>
+                            <div class="chart-container" style="position: relative; height:400; width:800">
+                                <canvas id="githubChart"></canvas>
+                            </div>
                         </div>
                     </div>
-                    
-                    <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" cellspacing="0" style="width:100%;">
-                        <thead>
-                            <tr>
-                              <th class="mdl-data-table__cell--non-numeric">Name</th>
-                              <th class="mdl-data-table__cell--non-numeric">Email</th>
-                              <th>Number</th>  
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="contact in contactList">
-                                <td class="mdl-data-table__cell--non-numeric">{{contact.name}}</td>
-                                <td class="mdl-data-table__cell--non-numeric">{{contact.email}}</td>
-                                <td>{{contact.number}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    </md-content>
-                </div>
+
+
+                    <div layout="row" md-theme="docs-dark">
+                        <div layout="column" md-theme="docs-dark">
+                            <div class="chart-container" style="position: relative; height:400; width:500">
+                                <canvas id="githubChartDay" style="width:480"></canvas>
+                            </div>
+                        </div>
+
+                        <div layout="column" md-theme="docs-dark">
+                            <div class="spacer" style="position: relative; height:400; width:40">
+                                
+                            </div>
+                        </div>
+
+                        <div layout="column" md-theme="docs-dark">
+                            <div class="chart-container" style="position: relative; height:400; width:500">
+                                <canvas id="githubChartHour" style="width:480"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </md-content>
+        
+
+            </div>
         </md-content>
     </div>
 
 
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
     
     <!-- Angular Material requires Angular.js Libraries -->
     <script src="/angular/angular.js"></script> 
     <script src="/angular-aria/angular-aria.js"></script> 
     <script src="/angular-animate/angular-animate.js"></script> 
     <script src="/angular-material/angular-material.js"></script> 
-    
+
+    <script src="/lodash/lodash.js"></script>
+    <script src="/angular-route/angular-route.js"></script>
+    <script src="/restangular/src/restangular.js"></script> 
+
     <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
     <script src="./Controller/controller.js"></script>
 
