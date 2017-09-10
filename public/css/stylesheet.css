@@ -1,0 +1,27 @@
+html, body {
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+.span_el{
+    color: #7c7c7c;
+    vertical-align: middle; 
+    font-family: 'Roboto'; 
+    font-size: 13px;
+}
+
+.estimation{
+    font-size: 13px;
+}
+
+.axes{
+    font-size: 11px;
+}
+
+.left_span{
+    float: left;
+}
+
+.right_span{
+    float: right;
+}
