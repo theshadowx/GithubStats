@@ -1,12 +1,13 @@
 <!DOCTYPE>
 <html ng-app="myApp">
 <head>
-    <title> Material MEAN Stack</title>
+    <title>Github Stats</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.2.1/material.indigo-pink.min.css">
+    <link rel="stylesheet" href="css/stylesheet.css">
 </head>
 
 <body ng-cloak ng-controller="AppCtrl" >
@@ -23,7 +24,7 @@
                 </md-button>
                 
                 <div>
-                    <h4 style="margin: 0px;">Github Stat<span style="font-size: 16px;">&nbsp; {{repoName}} {{releaseTag}}</span></h4>
+                    <h4 style="margin: 0px;">Github Stats<span style="font-size: 16px;">&nbsp; {{repoName}} {{releaseTag}}</span></h4>
                 </div>
 
                 <span flex></span>
@@ -31,7 +32,6 @@
         </md-toolbar> 
 
         <md-content layout-align="center center" flex>
-            <!-- SideNav -->
             <md-sidenav class="md-sidenav-left" md-component-id="left" md-whiteframe="4">
                 <md-content md-theme="docs-dark" layout-gt-sm="column" layout-padding flex>
                 </md-content>
@@ -51,9 +51,13 @@
 
                     <div layout="row" md-theme="docs-dark">
                         <div layout="column" md-theme="docs-dark">
+                            <span class="span_el estimation">Estimated views: {{dayViews}}</span>
                             <div class="chart-container" style="position: relative; height:400; width:500">
                                 <canvas id="githubChartDay" style="width:480"></canvas>
+                                <span class="span_el axes left_span">24 hours ago</span>
+                                <span class="span_el axes right_span">Now</span>
                             </div>
+                            <div></div>
                         </div>
 
                         <div layout="column" md-theme="docs-dark">
@@ -63,18 +67,15 @@
                         </div>
 
                         <div layout="column" md-theme="docs-dark">
+                            <span class="span_el estimation">Estimated views :  {{hourViews}}</span>
                             <div class="chart-container" style="position: relative; height:400; width:500">
                                 <canvas id="githubChartHour" style="width:480"></canvas>
+                                <span class="span_el axes left_span">60 minutes ago</span>
+                                <span class="span_el axes right_span">Now</span>
                             </div>
                         </div>
                     </div>
-
-
-
-
                 </md-content>
-        
-
             </div>
         </md-content>
     </div>

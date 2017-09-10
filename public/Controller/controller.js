@@ -3,8 +3,20 @@
 var myApp = angular.module('myApp',['ngMaterial','ngRoute', 'restangular']);
 
 myApp.config(function($mdThemingProvider) {
-    $mdThemingProvider.theme('input');
+    //$mdThemingProvider.theme('input');
     $mdThemingProvider.theme('docs-dark', 'default');
+    $mdThemingProvider.theme('altTheme')
+         .primaryPalette('grey',{
+        'default': '900'})
+         .accentPalette('grey',{
+        'default': '900'})
+    .dark();
+
+    $mdThemingProvider.theme('default')
+    .dark();
+
+    $mdThemingProvider.setDefaultTheme('altTheme');
+    $mdThemingProvider.alwaysWatchTheme(true);
 
 }).config(function(RestangularProvider) {
     RestangularProvider.setBaseUrl('https://api.github.com/repos/nuttyartist/notes/releases/');
@@ -19,13 +31,43 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     console.log("hi there");
 
     
-
     $scope.repoName = "Notes";
     $scope.releaseTag = "v1.0.0";
-
+    $scope.dayViews = 0;
+    $scope.hourViews = 0;
 
     $scope.toggleLeft = buildToggler('left');
     $scope.toggleRight = buildToggler('right');
+
+    var ChartGuideLinesColor = 'rgba(140, 140, 140,1)';
+    var chartOptions = {
+        legend: {
+            display: false
+        },
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true,
+                    padding: 5
+                },
+                gridLines: {
+                    color: ChartGuideLinesColor,
+                    zeroLineColor : ChartGuideLinesColor,
+                    drawBorder : false,
+                    tickMarkLength: 3
+                }
+            }],
+            xAxes: [{
+                display: false,
+                gridLines: {
+                    display : false
+                }
+            }]
+        }
+    };
+
+    var totalChartOptions = JSON.parse(JSON.stringify(chartOptions));
+    totalChartOptions.scales.xAxes[0].display = true;
 
     function buildToggler(componentId) {
       return function() {
@@ -37,13 +79,18 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     var updateChartHour = function(data){
         var dataLength = data.length - 2;
         var i = dataLength;
-    
+        var hourViewsValue = 0;
+
         data.forEach(function(element){
             if(i !== -1){
+                hourViewsValue += element.minuteTotal;
                 myChartHour.data.datasets[0].data[i] = element.minuteTotal;
                 i--;
             }
-            
+        });
+
+        $scope.$apply(function(){
+            $scope.hourViews = hourViewsValue;
         });
         myChartHour.update();
     };
@@ -51,13 +98,18 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     var updateChartDay = function(data){
         var dataLength = data.length - 1;
         var i = dataLength;
+        var dayViewsValue = 0;
     
         data.forEach(function(element){
             if(i !== -1){
+                dayViewsValue += element.hourTotal;
                 myChartDay.data.datasets[0].data[i] = element.hourTotal;
                 i--;
             }
             
+        });
+        $scope.$apply(function(){
+            $scope.dayViews = dayViewsValue;
         });
         myChartDay.update();
     };
@@ -72,25 +124,9 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     };
 
 
-    socket.on('updateRecordTotal', function(data) {
-        //console.log("Total ****************************");
-        //console.log(data);
-        updateChartTotal(data);
-    });
-  
-
-    socket.on('updateRecordHour', function(data) {
-        //console.log("Hour ****************************");
-        //console.log(data);
-        updateChartHour(data);
-        //updateTotal(data);
-    });
-
-    socket.on('updateRecordDay', function(data) {
-        //console.log("Day ****************************");
-        //console.log(data);
-        updateChartDay(data);
-    });
+    socket.on('updateRecordTotal', updateChartTotal);
+    socket.on('updateRecordHour', updateChartHour);
+    socket.on('updateRecordDay', updateChartDay);
 
 
     var countAll = 0;
@@ -104,32 +140,17 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         data: {
             labels: ["Mac", "Windows", "Linux", "Total"],
             datasets: [{
-                label: '# of downloads',
                 data: [countMac, countWindows, countLinux, countAll],
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
+                    'rgb(251, 167, 48)',
+                    'rgb(203, 70, 59)',
+                    'rgb(190, 76, 101)',
+                    'rgb(137, 81, 154)'
                 ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
+                borderWidth: 0
             }]
         },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
-            }
-        }
+        options: totalChartOptions
     });
 
     var ctxHour = document.getElementById("githubChartHour").getContext('2d');
@@ -149,7 +170,6 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
                      10,9,8,7,6,
                      5,4,3,2,1],
             datasets: [{
-                label: '# of downloads / minute',
                 data: [0,0,0,0,0,
                        0,0,0,0,0,
                        0,0,0,0,0,
@@ -166,18 +186,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
                 borderWidth: 0
             }]
         },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }],
-                xAxes: [{
-                    display: false
-                }]
-            }
-        }
+        options: chartOptions
     });
 
     var ctxDay = document.getElementById("githubChartDay").getContext('2d');
@@ -188,7 +197,6 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
                      16,15,14,13,12,11,10,9,
                      8,7,6,5,4,3,2,1],
             datasets: [{
-                label: '# of downloads',
                 data: [0,0,0,0,0,0,0,0,
                        0,0,0,0,0,0,0,0,
                        0,0,0,0,0,0,0,0],
@@ -196,18 +204,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
                 borderWidth: 0
             }]
         },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }],
-                xAxes: [{
-                    display: false
-                }]
-            }
-        }
+        options: chartOptions
     });
 
 }]);
