@@ -33,8 +33,8 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     
     $scope.repoName = "Notes";
     $scope.releaseTag = "v1.0.0";
-    $scope.dayViews = 0;
-    $scope.hourViews = 0;
+    $scope.dayDownloads = 0;
+    $scope.hourDownloads = 0;
 
     $scope.toggleLeft = buildToggler('left');
     $scope.toggleRight = buildToggler('right');
@@ -79,18 +79,18 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     var updateChartHour = function(data){
         var dataLength = data.length - 2;
         var i = dataLength;
-        var hourViewsValue = 0;
+        var hourDownloadsValue = 0;
 
         data.forEach(function(element){
             if(i !== -1){
-                hourViewsValue += element.minuteTotal;
+                hourDownloadsValue += element.minuteTotal;
                 myChartHour.data.datasets[0].data[i] = element.minuteTotal;
                 i--;
             }
         });
 
         $scope.$apply(function(){
-            $scope.hourViews = hourViewsValue;
+            $scope.hourDownloads = hourDownloadsValue;
         });
         myChartHour.update();
     };
@@ -98,18 +98,18 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     var updateChartDay = function(data){
         var dataLength = data.length - 1;
         var i = dataLength;
-        var dayViewsValue = 0;
+        var dayDownloadsValue = 0;
     
         data.forEach(function(element){
             if(i !== -1){
-                dayViewsValue += element.hourTotal;
+                dayDownloadsValue += element.hourTotal;
                 myChartDay.data.datasets[0].data[i] = element.hourTotal;
                 i--;
             }
             
         });
         $scope.$apply(function(){
-            $scope.dayViews = dayViewsValue;
+            $scope.dayDownloads = dayDownloadsValue;
         });
         myChartDay.update();
     };
