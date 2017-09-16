@@ -39,8 +39,14 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     $scope.toggleLeft = buildToggler('left');
     $scope.toggleRight = buildToggler('right');
 
+    // chart
+    var totalChart;
+    var hourChart;
+    var dayChart;
+
     var ChartGuideLinesColor = 'rgba(140, 140, 140,1)';
     var chartOptions = {
+        maintainAspectRatio: false,
         legend: {
             display: false
         },
@@ -84,7 +90,8 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         data.forEach(function(element){
             if(i !== -1){
                 hourDownloadsValue += element.minuteTotal;
-                myChartHour.data.datasets[0].data[i] = element.minuteTotal;
+                if(hourChart != null)
+                    hourChart.data.datasets[0].data[i] = element.minuteTotal;
                 i--;
             }
         });
@@ -92,7 +99,8 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         $scope.$apply(function(){
             $scope.hourDownloads = hourDownloadsValue;
         });
-        myChartHour.update();
+        if(hourChart != null)
+            hourChart.update();
     };
 
     var updateChartDay = function(data){
@@ -103,24 +111,29 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         data.forEach(function(element){
             if(i !== -1){
                 dayDownloadsValue += element.hourTotal;
-                myChartDay.data.datasets[0].data[i] = element.hourTotal;
+                if(dayChart != null)
+                    dayChart.data.datasets[0].data[i] = element.hourTotal;
                 i--;
             }
             
         });
+
         $scope.$apply(function(){
             $scope.dayDownloads = dayDownloadsValue;
         });
-        myChartDay.update();
+        if(dayChart != null)
+            dayChart.update();
     };
 
     var updateChartTotal = function(data){
-        if(data.length > 0) {
-            myChart.data.datasets[0].data = [data[0].macCnt, data[0].windowsCnt, data[0].linuxCnt, data[0].totalCnt];
-        }else{
-            myChart.data.datasets[0].data = [0, 0, 0, 0];
+        if(totalChart != null){
+            if(data.length > 0) {
+                totalChart.data.datasets[0].data = [data[0].macCnt, data[0].windowsCnt, data[0].linuxCnt, data[0].totalCnt];
+            }else{
+                totalChart.data.datasets[0].data = [0, 0, 0, 0];
+            }
+            totalChart.update();
         }
-        myChart.update();
     };
 
 
@@ -133,78 +146,93 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     var countLinux = 0;
     var countWindows = 0;
     var countMac = 0;
+    
+    var elTotal = document.getElementById("githubChart");
+    if(elTotal != null){
+        var ctx = elTotal.getContext('2d');
+        if(ctx!=null){
+            totalChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["Mac", "Windows", "Linux", "Total"],
+                    datasets: [{
+                        data: [countMac, countWindows, countLinux, countAll],
+                        backgroundColor: [
+                            'rgb(251, 167, 48)',
+                            'rgb(203, 70, 59)',
+                            'rgb(190, 76, 101)',
+                            'rgb(137, 81, 154)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: totalChartOptions
+            });
+        }
+    }
 
-    var ctx = document.getElementById("githubChart").getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ["Mac", "Windows", "Linux", "Total"],
-            datasets: [{
-                data: [countMac, countWindows, countLinux, countAll],
-                backgroundColor: [
-                    'rgb(251, 167, 48)',
-                    'rgb(203, 70, 59)',
-                    'rgb(190, 76, 101)',
-                    'rgb(137, 81, 154)'
-                ],
-                borderWidth: 0
-            }]
-        },
-        options: totalChartOptions
-    });
+    var elHour = document.getElementById("githubChartHour");
+    if(elHour != null){
+        var ctxHour = elHour.getContext('2d');
+        if(ctxHour != null){
+            hourChart = new Chart(ctxHour, {
+                type: 'bar',
+                data: {
+                    labels: [60,59,58,57,56,
+                             55,54,53,52,51,
+                             50,49,48,47,46,
+                             45,44,43,42,41,
+                             40,39,38,37,36,
+                             35,44,43,32,31,
+                             30,29,28,27,26,
+                             25,24,23,22,21,
+                             20,19,18,17,16,
+                             15,14,13,12,11,
+                             10,9,8,7,6,
+                             5,4,3,2,1],
+                    datasets: [{
+                        data: [0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0,
+                               0,0,0,0,0],
+                        backgroundColor: 'rgba(104, 171, 89,1)',
+                        borderWidth: 0
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+    }   
 
-    var ctxHour = document.getElementById("githubChartHour").getContext('2d');
-    var myChartHour = new Chart(ctxHour, {
-        type: 'bar',
-        data: {
-            labels: [60,59,58,57,56,
-                     55,54,53,52,51,
-                     50,49,48,47,46,
-                     45,44,43,42,41,
-                     40,39,38,37,36,
-                     35,44,43,32,31,
-                     30,29,28,27,26,
-                     25,24,23,22,21,
-                     20,19,18,17,16,
-                     15,14,13,12,11,
-                     10,9,8,7,6,
-                     5,4,3,2,1],
-            datasets: [{
-                data: [0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0,
-                       0,0,0,0,0],
-                backgroundColor: 'rgba(104, 171, 89,1)',
-                borderWidth: 0
-            }]
-        },
-        options: chartOptions
-    });
-
-    var ctxDay = document.getElementById("githubChartDay").getContext('2d');
-    var myChartDay = new Chart(ctxDay, {
-        type: 'bar',
-        data: {
-            labels: [24,23,22,21,20,19,18,17,
-                     16,15,14,13,12,11,10,9,
-                     8,7,6,5,4,3,2,1],
-            datasets: [{
-                data: [0,0,0,0,0,0,0,0,
-                       0,0,0,0,0,0,0,0,
-                       0,0,0,0,0,0,0,0],
-                backgroundColor: 'rgba(94, 142, 200,1)',
-                borderWidth: 0
-            }]
-        },
-        options: chartOptions
-    });
+    var elDay = document.getElementById("githubChartDay");
+    if(elDay != null){
+        var ctxDay = elDay.getContext('2d');
+        if(ctxDay != null){
+            dayChart = new Chart(ctxDay, {
+                type: 'bar',
+                data: {
+                    labels: [24,23,22,21,20,19,18,17,
+                             16,15,14,13,12,11,10,9,
+                             8,7,6,5,4,3,2,1],
+                    datasets: [{
+                        data: [0,0,0,0,0,0,0,0,
+                               0,0,0,0,0,0,0,0,
+                               0,0,0,0,0,0,0,0],
+                        backgroundColor: 'rgba(94, 142, 200,1)',
+                        borderWidth: 0
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+    }
 
 }]);
