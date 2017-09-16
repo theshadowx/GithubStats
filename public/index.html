@@ -10,10 +10,12 @@
     <link rel="stylesheet" href="css/stylesheet.css">
 </head>
 
-<body ng-cloak ng-controller="AppCtrl" >
+<body ng-cloak ng-controller="AppCtrl" layout="row">
     
-    <div layout="column" layout-fill>
-        <md-toolbar class="md-raised md-default-theme" md-whiteframe="2">
+    <!-- <md-content layout="column" layout-fill> -->
+    <div layout="column" tabindex="-1" role="main" flex="" aria-hidden="false">
+
+        <md-toolbar class="md-whiteframe-glow-z1 site-content-toolbar _md _md-toolbar-transitions" md-whiteframe="2">
             <div class="md-toolbar-tools">
                 <div class="appLogo">
 
@@ -31,55 +33,53 @@
             </div>
         </md-toolbar> 
 
-        <md-content layout-align="center center" flex>
+        <md-content layout="column" layout-align="center center" flex>
+
             <md-sidenav class="md-sidenav-left" md-component-id="left" md-whiteframe="4">
                 <md-content md-theme="docs-dark" layout-gt-sm="column" layout-padding flex>
                 </md-content>
             </md-sidenav>
 
-            <div layout="row" layout-align="center center">
-                <md-content layout-padding>
+            <div layout="column"  layout-align="space-between none" style="width: 800px; " flex>
+               
 
-                    <div layout="row" md-theme="docs-dark" layout-align="center start" >
-                        <div>
-                            <div class="chart-container" style="position: relative; height:400; width:800">
-                                <canvas id="githubChart"></canvas>
-                            </div>
-                        </div>
+                <div layout="column" flex>
+                    <span class="span_el estimation">Total downloads</span>
+                    <div class="chart-container-main" layout="column" flex>
+                        <canvas id="githubChart"></canvas>
                     </div>
+                </div>
 
-
-                    <div layout="row" md-theme="docs-dark">
-                        <div layout="column" md-theme="docs-dark">
-                            <span class="span_el estimation">Estimated downloads: {{dayDownloads}}</span>
-                            <div class="chart-container" style="position: relative; height:400; width:500">
-                                <canvas id="githubChartDay" style="width:480"></canvas>
+<!-- layout-gt-sm="row" layout-sm="column" layout-xs="column" -->
+                <div layout="row" layout-padding flex layout-align="space-between none">
+                    
+                    <div layout="column" flex>
+                        <span class="span_el estimation">Est. downloads: {{dayDownloads}}</span>
+                        <!-- <div layout="column" flex> -->
+                            <div class="chart-container-secondary">
+                                <canvas id="githubChartDay"></canvas>
                                 <span class="span_el axes left_span">24 hours ago</span>
                                 <span class="span_el axes right_span">Now</span>
                             </div>
-                            <div></div>
-                        </div>
+                        <!-- </div> -->
+                    </div>
 
-                        <div layout="column" md-theme="docs-dark">
-                            <div class="spacer" style="position: relative; height:400; width:40">
-                                
-                            </div>
-                        </div>
-
-                        <div layout="column" md-theme="docs-dark">
-                            <span class="span_el estimation">Estimated downloads :  {{hourDownloads}}</span>
-                            <div class="chart-container" style="position: relative; height:400; width:500">
-                                <canvas id="githubChartHour" style="width:480"></canvas>
+                    <div layout="column" flex>
+                        <span class="span_el estimation">Est. downloads :  {{hourDownloads}}</span>
+                        <!-- <div layout="column" flex> -->
+                            <div class="chart-container-secondary">
+                                <canvas id="githubChartHour"></canvas>
                                 <span class="span_el axes left_span">60 minutes ago</span>
                                 <span class="span_el axes right_span">Now</span>
                             </div>
-                        </div>
+                        <!-- </div> -->
                     </div>
-                </md-content>
+                </div>
+
             </div>
         </md-content>
+    <!-- </md-content> -->
     </div>
-
 
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
