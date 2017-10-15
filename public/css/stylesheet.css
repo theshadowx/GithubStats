@@ -1,3 +1,15 @@
+@font-face {
+    font-family: 'robotoregular';
+    src: url('Roboto-Regular-webfont.eot');
+    src: url('Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('Roboto-Regular-webfont.woff2') format('woff2'),
+         url('Roboto-Regular-webfont.woff') format('woff'),
+         url('Roboto-Regular-webfont.ttf') format('truetype'),
+         url('Roboto-Regular-webfont.svg#robotoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
 html, body {
     max-width: 100%;
     overflow-x: hidden !important;
@@ -6,7 +18,7 @@ html, body {
 .span_el{
     color: #7c7c7c;
     vertical-align: middle; 
-    font-family: 'Roboto'; 
+    font-family: 'robotoregular'; 
     font-size: 13px;
 }
 
@@ -24,4 +36,16 @@ html, body {
 
 .right_span{
     float: right;
+}
+
+.gridList md-grid-list{
+    margin: 8px; 
+}
+
+.gridList md-grid-tile{
+    transition: all 400ms ease-out 50ms; 
+}
+
+.container{
+    margin: 20px;
 }
