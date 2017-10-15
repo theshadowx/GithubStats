@@ -44,6 +44,11 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     var hourChart;
     var dayChart;
 
+    var countAll = 0;
+    var countLinux = 0;
+    var countWindows = 0;
+    var countMac = 0;
+
     var ChartGuideLinesColor = 'rgba(140, 140, 140,1)';
     var chartOptions = {
         maintainAspectRatio: false,
@@ -80,7 +85,6 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         $mdSidenav(componentId).toggle();
       }
     }
-
 
     var updateChartHour = function(data){
         var dataLength = data.length - 2;
@@ -135,104 +139,119 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
             totalChart.update();
         }
     };
+    
+    var createTotalChart = function(){
+        var elTotal = document.getElementById("githubChart");
+        if(elTotal != null){
+            var ctx = elTotal.getContext('2d');
+            if(ctx!=null){
+                totalChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ["Mac", "Windows", "Linux", "Total"],
+                        datasets: [{
+                            data: [countMac, countWindows, countLinux, countAll],
+                            backgroundColor: [
+                                'rgb(251, 167, 48)',
+                                'rgb(203, 70, 59)',
+                                'rgb(190, 76, 101)',
+                                'rgb(137, 81, 154)'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: totalChartOptions
+                });
+            }
+        }else{
+            console.error("can't find total Chart");
+        }
+    }
 
+    var createHourChart = function(){
+        var elHour = document.getElementById("githubChartHour");
+        if(elHour != null){
+            var ctxHour = elHour.getContext('2d');
+            if(ctxHour != null){
+                hourChart = new Chart(ctxHour, {
+                    type: 'bar',
+                    data: {
+                        labels: [60,59,58,57,56,
+                                 55,54,53,52,51,
+                                 50,49,48,47,46,
+                                 45,44,43,42,41,
+                                 40,39,38,37,36,
+                                 35,44,43,32,31,
+                                 30,29,28,27,26,
+                                 25,24,23,22,21,
+                                 20,19,18,17,16,
+                                 15,14,13,12,11,
+                                 10,9,8,7,6,
+                                 5,4,3,2,1],
+                        datasets: [{
+                            data: [0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0,
+                                   0,0,0,0,0],
+                            backgroundColor: 'rgba(104, 171, 89,1)',
+                            borderWidth: 0
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+        }else{
+            console.error("can't find hour Chart");
+        }
+    }
+
+    var createDayChart = function(){
+        var elDay = document.getElementById("githubChartDay");
+        if(elDay != null){
+            var ctxDay = elDay.getContext('2d');
+            if(ctxDay != null){
+                dayChart = new Chart(ctxDay, {
+                    type: 'bar',
+                    data: {
+                        labels: [24,23,22,21,20,19,18,17,
+                                 16,15,14,13,12,11,10,9,
+                                 8,7,6,5,4,3,2,1],
+                        datasets: [{
+                            data: [0,0,0,0,0,0,0,0,
+                                   0,0,0,0,0,0,0,0,
+                                   0,0,0,0,0,0,0,0],
+                            backgroundColor: 'rgba(94, 142, 200,1)',
+                            borderWidth: 0
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+        }else{
+            console.error("can't find day Chart");
+        }
+    }
+
+
+    var createCharts = function(){
+        createTotalChart();
+        createHourChart();
+        createDayChart();
+    }
+
+
+    addEventListener('load', createCharts, false);
 
     socket.on('updateRecordTotal', updateChartTotal);
     socket.on('updateRecordHour', updateChartHour);
     socket.on('updateRecordDay', updateChartDay);
-
-
-    var countAll = 0;
-    var countLinux = 0;
-    var countWindows = 0;
-    var countMac = 0;
-    
-    var elTotal = document.getElementById("githubChart");
-    if(elTotal != null){
-        var ctx = elTotal.getContext('2d');
-        if(ctx!=null){
-            totalChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Mac", "Windows", "Linux", "Total"],
-                    datasets: [{
-                        data: [countMac, countWindows, countLinux, countAll],
-                        backgroundColor: [
-                            'rgb(251, 167, 48)',
-                            'rgb(203, 70, 59)',
-                            'rgb(190, 76, 101)',
-                            'rgb(137, 81, 154)'
-                        ],
-                        borderWidth: 0
-                    }]
-                },
-                options: totalChartOptions
-            });
-        }
-    }
-
-    var elHour = document.getElementById("githubChartHour");
-    if(elHour != null){
-        var ctxHour = elHour.getContext('2d');
-        if(ctxHour != null){
-            hourChart = new Chart(ctxHour, {
-                type: 'bar',
-                data: {
-                    labels: [60,59,58,57,56,
-                             55,54,53,52,51,
-                             50,49,48,47,46,
-                             45,44,43,42,41,
-                             40,39,38,37,36,
-                             35,44,43,32,31,
-                             30,29,28,27,26,
-                             25,24,23,22,21,
-                             20,19,18,17,16,
-                             15,14,13,12,11,
-                             10,9,8,7,6,
-                             5,4,3,2,1],
-                    datasets: [{
-                        data: [0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0,
-                               0,0,0,0,0],
-                        backgroundColor: 'rgba(104, 171, 89,1)',
-                        borderWidth: 0
-                    }]
-                },
-                options: chartOptions
-            });
-        }
-    }   
-
-    var elDay = document.getElementById("githubChartDay");
-    if(elDay != null){
-        var ctxDay = elDay.getContext('2d');
-        if(ctxDay != null){
-            dayChart = new Chart(ctxDay, {
-                type: 'bar',
-                data: {
-                    labels: [24,23,22,21,20,19,18,17,
-                             16,15,14,13,12,11,10,9,
-                             8,7,6,5,4,3,2,1],
-                    datasets: [{
-                        data: [0,0,0,0,0,0,0,0,
-                               0,0,0,0,0,0,0,0,
-                               0,0,0,0,0,0,0,0],
-                        backgroundColor: 'rgba(94, 142, 200,1)',
-                        borderWidth: 0
-                    }]
-                },
-                options: chartOptions
-            });
-        }
-    }
 
 }]);
