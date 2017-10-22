@@ -1,6 +1,6 @@
 'use strict';
 
-var myApp = angular.module('myApp',['ngMaterial','ngRoute', 'restangular']);
+var myApp = angular.module('myApp',['ngMaterial','angular-moment', 'ngRoute', 'ngMessages', 'restangular']);
 
 myApp.config(function($mdThemingProvider) {
     //$mdThemingProvider.theme('input');
@@ -22,15 +22,22 @@ myApp.config(function($mdThemingProvider) {
     RestangularProvider.setBaseUrl('https://api.github.com/repos/nuttyartist/notes/releases/');
 });
 
+
+
 myApp.factory('socket', ['$rootScope', function($rootScope) {
     var socket = io();
     return socket;
 }]);
 
 myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidenav', 'Restangular', function($scope, $http, socket, $timeout, $mdSidenav, Restangular){
-    console.log("hi there");
 
-    
+
+    var yesterday = moment().format('L');
+    var monthOlder = moment().subtract(28, 'days').format('L');
+    this.myDateStart = new Date(monthOlder);
+    this.myDateEnd = new Date(yesterday);
+    this.isOpen = false;
+
     $scope.repoName = "Notes";
     $scope.releaseTag = "v1.0.0";
     $scope.dayDownloads = 0;
@@ -43,6 +50,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     var totalChart;
     var hourChart;
     var dayChart;
+    var rangeChart;
 
     var countAll = 0;
     var countLinux = 0;
@@ -140,6 +148,24 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         }
     };
     
+    var updateRangeStatChart = function(data){
+        if(rangeChart != null){
+
+            var dateArray = [];
+            var current = monthOlder;
+            dateArray.push(current);
+            while(current != yesterday){
+                current = moment(current, "MM/DD/YYYY").add(1, 'days').format('L');
+                dateArray.push(current);
+            }
+
+            rangeChart.data.labels = dateArray;
+            rangeChart.data.datasets[0].data = data;
+        }
+
+        rangeChart.update();
+    };
+
     var createTotalChart = function(){
         var elTotal = document.getElementById("githubChart");
         if(elTotal != null){
@@ -172,35 +198,16 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         var elHour = document.getElementById("githubChartHour");
         if(elHour != null){
             var ctxHour = elHour.getContext('2d');
+            var mlabels = _.rangeRight(1,61);
+            var mdata = _.rangeRight(0,60,0);
+            
             if(ctxHour != null){
                 hourChart = new Chart(ctxHour, {
                     type: 'bar',
                     data: {
-                        labels: [60,59,58,57,56,
-                                 55,54,53,52,51,
-                                 50,49,48,47,46,
-                                 45,44,43,42,41,
-                                 40,39,38,37,36,
-                                 35,44,43,32,31,
-                                 30,29,28,27,26,
-                                 25,24,23,22,21,
-                                 20,19,18,17,16,
-                                 15,14,13,12,11,
-                                 10,9,8,7,6,
-                                 5,4,3,2,1],
+                        labels: mlabels,
                         datasets: [{
-                            data: [0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0,
-                                   0,0,0,0,0],
+                            data: mdata,
                             backgroundColor: 'rgba(104, 171, 89,1)',
                             borderWidth: 0
                         }]
@@ -217,17 +224,16 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         var elDay = document.getElementById("githubChartDay");
         if(elDay != null){
             var ctxDay = elDay.getContext('2d');
+            var mlabels = _.rangeRight(1,25);
+            var mdata = _.rangeRight(0,24,0);
+            
             if(ctxDay != null){
                 dayChart = new Chart(ctxDay, {
                     type: 'bar',
                     data: {
-                        labels: [24,23,22,21,20,19,18,17,
-                                 16,15,14,13,12,11,10,9,
-                                 8,7,6,5,4,3,2,1],
+                        labels: mlabels,
                         datasets: [{
-                            data: [0,0,0,0,0,0,0,0,
-                                   0,0,0,0,0,0,0,0,
-                                   0,0,0,0,0,0,0,0],
+                            data: mdata,
                             backgroundColor: 'rgba(94, 142, 200,1)',
                             borderWidth: 0
                         }]
@@ -240,18 +246,50 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         }
     }
 
+    var createRangeChart = function(){
+        var elRange = document.getElementById("rangeChart");
+        if(elRange != null){
+            var ctxRange = elRange.getContext('2d');
+            var mlabels_range = _.rangeRight(1,29);
+            var mdata_range = _.rangeRight(0,28,0);
+            
+            if(ctxRange != null){
+                rangeChart = new Chart(ctxRange, {
+                    type: 'bar',
+                    data: {
+                        labels: mlabels_range,
+                        datasets: [{
+                            data: mdata_range,
+                            backgroundColor: 'rgba(229, 200, 80, 1)',
+                            borderWidth: 0
+                        }]
+                    },
+                    options: chartOptions
+                });
+            }
+        }else{
+            console.error("can't find range Chart");
+        }
+    }
 
     var createCharts = function(){
         createTotalChart();
         createHourChart();
         createDayChart();
+        createRangeChart();
     }
 
+    var requestRangeStat = function(startDate, endDate){
+        socket.emit ('rangeStatRequest', {start: startDate , end: endDate});
+    };
 
     addEventListener('load', createCharts, false);
 
     socket.on('updateRecordTotal', updateChartTotal);
     socket.on('updateRecordHour', updateChartHour);
     socket.on('updateRecordDay', updateChartDay);
+    socket.on('respondRangeStat', updateRangeStatChart);
+
+    requestRangeStat(monthOlder, yesterday);
 
 }]);

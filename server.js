@@ -227,6 +227,43 @@ function sendDayValues(socket) {
     });
 }
 
+function respondRangeStat(range, socket){
+    var start = Date.parse(range.start);
+    var end = Date.parse(range.end);
+
+    if(start > end){
+        var tmp = end;
+        end = start;
+        start = tmp;
+    }
+
+    var rangeDay = 24*60*60*1000;
+    var numDays = (end-start)/rangeDay;
+    var rangeValues = [];
+
+    notesReleaseStat.find({ timestamp: { $gt: start, $lte: end } }).sort({"timestamp":-1}).toArray(function (err, items) {
+        
+        for(var i=0; i<numDays; i++){
+
+            var filterDay = function(item){
+                return (item.timestamp >= (start + (i*rangeDay)) && item.timestamp < (start + (i+1)*rangeDay));
+            };
+
+            var rangeArray = items.filter(filterDay);
+
+            if(rangeArray.length > 0){
+                rangeValues.push(rangeArray[0].totalCnt - rangeArray[rangeArray.length-1].totalCnt + 1);
+                console.log(rangeArray[0].totalCnt);
+            }else{
+                rangeValues.push(0);
+            }
+        }
+
+        socket.emit ('respondRangeStat', rangeValues);
+    });
+}
+
+
 db.createCollection("notesReleaseStat", {});
 var notesReleaseStat = db.collection('notesReleaseStat');
 
@@ -238,18 +275,6 @@ db.on('connect', function () {
     console.log('database connected');
     var count = 0;
 
-
-
-
-    // get
-    app.get('/notesReleaseStat', function(req, res){
-        console.log("received a GET request");
-
-        notesReleaseStat.find(function(err, docs){
-            res.json(docs);
-        });
-    });
-
     io.on('connection', function (socket) {
         
         var initGraphs = function(){
@@ -257,6 +282,11 @@ db.on('connect', function () {
             sendHourValues(socket);
             sendDayValues(socket);
         }
+
+
+        socket.on ('rangeStatRequest', function (range) {
+            respondRangeStat(range, socket);
+        });
 
         console.log("new socket connected");
         initGraphs();
@@ -273,9 +303,8 @@ db.on('connect', function () {
                 count = 0;
                 sendDayValues(io);
             }
-        }, 60000);
+    }, 60000);
 })
-
 
 app.use(express.static(__dirname + "/public"));
 app.use(express.static(__dirname + "/node_modules"));
