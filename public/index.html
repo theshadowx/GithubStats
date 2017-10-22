@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/stylesheet.css">
 </head>
 
-<body ng-cloak ng-controller="AppCtrl" layout="column" >
+<body ng-cloak ng-controller="AppCtrl as ctrl" layout="column" >
     
     <div layout="column" tabindex="-1" role="main" aria-hidden="false" flex>
 
@@ -74,7 +74,24 @@
                             </div>
                         </md-content>
                     </md-grid-tile>
+
+                    <!-- range Chart -->
+                    <md-grid-tile
+                        md-rowspan="2" md-colspan="2" md-colspan-sm="2" md-colspan-xs="1" flex>
+                        <md-content style="height: 100%;" layout="column" flex>
+                            <span>
+                                <md-datepicker ng-model="ctrl.myDateStart" md-placeholder="Enter start date"></md-datepicker>
+                                <md-datepicker ng-model="ctrl.myDateEnd" md-placeholder="Enter end date"></md-datepicker>
+                            </span>
+                            <div layout="row" flex>
+                                <canvas id="rangeChart"></canvas>
+                            </div>
+                        </md-content>
+                    </md-grid-tile>
+                    
+
                 </md-grid-list>
+
             </div>
         </md-content> 
     </div>
@@ -88,14 +105,18 @@
     <script src="/angular-animate/angular-animate.js"></script> 
     <script src="/angular-material/angular-material.js"></script> 
 
+    <script src="/moment/moment.js"></script>
+    <script src="/angular-momentjs/angular-momentjs.js"></script>
+
     <script src="/lodash/lodash.js"></script>
     <script src="/angular-route/angular-route.js"></script>
     <script src="/restangular/src/restangular.js"></script> 
 
+    <script src="/angular-messages/angular-messages.js"></script>
+
     <script defer src="https://code.getmdl.io/1.2.1/material.min.js"></script>
     <script src="./Controller/controller.js"></script>
-
-
+    
 
 </body>
 </html>
