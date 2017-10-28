@@ -80,8 +80,9 @@
                         md-rowspan="2" md-colspan="2" md-colspan-sm="2" md-colspan-xs="1" flex>
                         <md-content style="height: 100%;" layout="column" flex>
                             <span>
-                                <md-datepicker ng-model="ctrl.myDateStart" md-placeholder="Enter start date"></md-datepicker>
-                                <md-datepicker ng-model="ctrl.myDateEnd" md-placeholder="Enter end date"></md-datepicker>
+                                <md-datepicker ng-model="range.myDateStart" md-placeholder="Enter start date"></md-datepicker>
+                                <md-datepicker ng-model="range.myDateEnd" md-placeholder="Enter end date"></md-datepicker>
+                                <md-button class="md-raised md-primary" ng-click="rangeApplyClicked()" >Apply</md-button>
                             </span>
                             <div layout="row" flex>
                                 <canvas id="rangeChart"></canvas>
