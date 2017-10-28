@@ -31,12 +31,12 @@ myApp.factory('socket', ['$rootScope', function($rootScope) {
 
 myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidenav', 'Restangular', function($scope, $http, socket, $timeout, $mdSidenav, Restangular){
 
-
     var yesterday = moment().format('L');
     var monthOlder = moment().subtract(28, 'days').format('L');
-    this.myDateStart = new Date(monthOlder);
-    this.myDateEnd = new Date(yesterday);
-    this.isOpen = false;
+    $scope.range = {};
+    $scope.range.myDateStart = new Date(monthOlder);
+    $scope.range.myDateEnd = new Date(yesterday);
+    $scope.isOpen = false;
 
     $scope.repoName = "Notes";
     $scope.releaseTag = "v1.0.0";
@@ -152,15 +152,15 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         if(rangeChart != null){
 
             var dateArray = [];
-            var current = monthOlder;
+            var current = data.startDate;
             dateArray.push(current);
-            while(current != yesterday){
+            while(current != data.endDate){
                 current = moment(current, "MM/DD/YYYY").add(1, 'days').format('L');
                 dateArray.push(current);
             }
 
             rangeChart.data.labels = dateArray;
-            rangeChart.data.datasets[0].data = data;
+            rangeChart.data.datasets[0].data = data.values;
         }
 
         rangeChart.update();
@@ -255,13 +255,15 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
             
             if(ctxRange != null){
                 rangeChart = new Chart(ctxRange, {
-                    type: 'bar',
+                    type: 'line',
                     data: {
                         labels: mlabels_range,
                         datasets: [{
                             data: mdata_range,
                             backgroundColor: 'rgba(229, 200, 80, 1)',
-                            borderWidth: 0
+                            borderColor: 'rgba(229, 200, 80, 1)',
+                            borderWidth: 0,
+                            fill: false
                         }]
                     },
                     options: chartOptions
@@ -280,7 +282,18 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     }
 
     var requestRangeStat = function(startDate, endDate){
-        socket.emit ('rangeStatRequest', {start: startDate , end: endDate});
+        socket.emit('rangeStatRequest', {start: startDate , end: endDate});
+    };
+
+    $scope.rangeApplyClicked = function(){
+        var m_start_epoch = $scope.range.myDateStart.valueOf();
+        var m_end_epoch = $scope.range.myDateEnd.valueOf();
+        if(m_start_epoch < m_end_epoch){
+            var m_start = moment(m_start_epoch).format('L');
+            var m_end = moment(m_end_epoch).format('L');
+            
+            requestRangeStat(m_start, m_end);
+        }
     };
 
     addEventListener('load', createCharts, false);

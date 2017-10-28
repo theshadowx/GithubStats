@@ -253,13 +253,12 @@ function respondRangeStat(range, socket){
 
             if(rangeArray.length > 0){
                 rangeValues.push(rangeArray[0].totalCnt - rangeArray[rangeArray.length-1].totalCnt + 1);
-                console.log(rangeArray[0].totalCnt);
             }else{
                 rangeValues.push(0);
             }
         }
 
-        socket.emit ('respondRangeStat', rangeValues);
+        socket.emit ('respondRangeStat', {values : rangeValues, startDate : range.start, endDate : range.end});
     });
 }
 
