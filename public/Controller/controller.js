@@ -99,13 +99,29 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         var i = dataLength;
         var hourDownloadsValue = 0;
 
-        data.forEach(function(element){
-            if(i !== -1){
-                hourDownloadsValue += element.minuteTotal;
-                if(hourChart != null)
-                    hourChart.data.datasets[0].data[i] = element.minuteTotal;
-                i--;
-            }
+        var hourArray = [];
+        var previous;
+        var current = [];
+        var currentHour;
+        var currentDate;
+
+        for(var i=60; i>0; i--){
+
+            previous = moment().subtract(i, "minutes");
+            current = moment().subtract(i-1, "minutes");
+
+            currentDate = previous.format("LL");
+            currentHour = previous.format("kk:mm") + " - " + current.format("kk:mm");
+            
+            current = [currentDate, currentHour];
+            hourArray.push(current);
+        }
+
+        hourChart.data.labels = hourArray;
+
+        hourChart.data.datasets[0].data = data.map(a => a.minuteTotal).reverse();
+        hourDownloadsValue = hourChart.data.datasets[0].data.reduce(function(accumulator, currentValue) {
+            return accumulator + currentValue;
         });
 
         $scope.$apply(function(){
@@ -120,14 +136,28 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         var i = dataLength;
         var dayDownloadsValue = 0;
     
-        data.forEach(function(element){
-            if(i !== -1){
-                dayDownloadsValue += element.hourTotal;
-                if(dayChart != null)
-                    dayChart.data.datasets[0].data[i] = element.hourTotal;
-                i--;
-            }
+        var dayArray = [];
+        var previous;
+        var current = [];
+        var currentHour;
+        var currentDate;
+
+        for(var i=24; i>0; i--){
+
+            previous = moment().subtract(i, "hours").startOf('hour');
+            current = moment().subtract(i-1, "hours").startOf('hour');
+
+            currentDate = previous.format("LL");
+            currentHour = previous.format("kk:mm") + " - " + current.format("kk:mm");
             
+            current = [currentDate, currentHour];
+            dayArray.push(current);
+        }
+
+        dayChart.data.labels = dayArray;
+        dayChart.data.datasets[0].data = data != null ? data.map(a => a.hourTotal).reverse() : dayChart.data.datasets[0].data;
+        dayDownloadsValue = dayChart.data.datasets[0].data.reduce(function(accumulator, currentValue) {
+            return accumulator + currentValue;
         });
 
         $scope.$apply(function(){
@@ -141,9 +171,8 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         if(totalChart != null){
             if(data.length > 0) {
                 totalChart.data.datasets[0].data = [data[0].macCnt, data[0].windowsCnt, data[0].linuxCnt, data[0].totalCnt];
-            }else{
-                totalChart.data.datasets[0].data = [0, 0, 0, 0];
             }
+
             totalChart.update();
         }
     };
@@ -224,14 +253,33 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
         var elDay = document.getElementById("githubChartDay");
         if(elDay != null){
             var ctxDay = elDay.getContext('2d');
+
+            var hourArray = [];
+            var previous;
+            var current = [];
+            var currentHour;
+            var currentDate;
+    
+            for(var i=24; i>0; i--){
+
+                previous = moment().subtract(i, "hours").startOf('hour');
+                current = moment().subtract(i-1, "hours").startOf('hour');
+
+                currentDate = previous.format("LL");
+                currentHour = previous.format("kk:mm") + " - " + current.format("kk:mm");
+                
+                current = [currentDate, currentHour];
+                hourArray.push(current);
+            }
+
             var mlabels = _.rangeRight(1,25);
-            var mdata = _.rangeRight(0,24,0);
+            var mdata = _.rangeRight(0,25,0);
             
             if(ctxDay != null){
                 dayChart = new Chart(ctxDay, {
                     type: 'bar',
                     data: {
-                        labels: mlabels,
+                        labels: hourArray,
                         datasets: [{
                             data: mdata,
                             backgroundColor: 'rgba(94, 142, 200,1)',
