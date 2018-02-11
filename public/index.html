@@ -54,7 +54,7 @@
                     <!-- Day Chart -->
                     <md-grid-tile md-rowspan="2" md-colspan="1" md-colspan-sm="1" md-colspan-xs="1">
                         <md-content style="height: 100%;" layout="column" flex>
-                            <span class="span_el estimation">Est. downloads: {{dayDownloads}}</span>
+                            <span class="span_el estimation">Est. downloads : {{dayDownloads}}</span>
                             <div style="height: calc(100% - 40px);">
                                 <canvas id="githubChartDay"></canvas>
                                 <span class="span_el axes left_span">24 hours ago</span>
@@ -66,7 +66,7 @@
                     <!-- Hour Chart -->
                     <md-grid-tile md-rowspan="2" md-colspan="1" md-colspan-sm="1" md-colspan-xs="1">
                         <md-content style="height: 100%;" layout="column" flex>
-                            <span class="span_el estimation">Est. downloads: {{hourDownloads}}</span>
+                            <span class="span_el estimation">Est. downloads : {{hourDownloads}}</span>
                             <div style="height: calc(100% - 40px);">
                                 <canvas id="githubChartHour"></canvas>
                                 <span class="span_el axes left_span">24 hours ago</span>
@@ -87,12 +87,10 @@
                             <div layout="row" flex>
                                 <canvas id="rangeChart"></canvas>
                             </div>
+                            <span class="span_el"> Selected range downloads : {{totalDownloadsRange}}</span>
                         </md-content>
                     </md-grid-tile>
-                    
-
                 </md-grid-list>
-
             </div>
         </md-content> 
     </div>
