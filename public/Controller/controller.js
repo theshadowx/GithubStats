@@ -42,6 +42,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     $scope.releaseTag = "v1.0.0";
     $scope.dayDownloads = 0;
     $scope.hourDownloads = 0;
+    $scope.totalDownloadsRange = 0;
 
     $scope.toggleLeft = buildToggler('left');
     $scope.toggleRight = buildToggler('right');
@@ -190,6 +191,10 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
 
             rangeChart.data.labels = dateArray;
             rangeChart.data.datasets[0].data = data.values;
+            $scope.totalDownloadsRange = data.values.reduce(function(accumulator, currentValue){
+                return accumulator + currentValue;
+            });
+            $scope.$apply();
         }
 
         rangeChart.update();
