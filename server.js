@@ -102,7 +102,7 @@ function sendTotal(socket){
 
     notesReleaseStat.find().sort({"timestamp":-1}).toArray(function (err, items) {
         if(err){
-            console("** ERROR [sendTotal]: ", err.message);
+            console.log("** ERROR [sendTotal]: ", err.message);
             return;
         }else{
             if(items.length > 0){
