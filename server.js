@@ -97,10 +97,11 @@ function addRecord(timestampValue, versionValue, windowsCntValue, macCntValue, l
 
 
 function sendTotal(socket){
-
+    var dateNow = Math.floor(Date.now()/60000) * 60000;
+    var dateMinutePast = dateNow - (61*1000)
     var totalRecord = [];
 
-    notesReleaseStat.find().sort({"timestamp":-1}).toArray(function (err, items) {
+    notesReleaseStat.find({ timestamp: { $gt: dateMinutePast, $lte: dateNow } }).sort({"timestamp":-1}).toArray(function (err, items) {
         if(err){
             console.log("** ERROR [sendTotal]: ", err.message);
             return;
