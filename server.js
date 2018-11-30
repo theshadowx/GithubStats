@@ -90,7 +90,8 @@ function addRecord(timestampValue, versionValue, windowsCntValue, macCntValue, l
         linuxCnt:   linuxCntValue,
         totalCnt:   totalCntValue}
         , function(err, saved) {
-            if( err || !saved ) console.log("User not saved");
+            if(err || !saved)
+                console.log("[Add Record]", err);
             //else console.log("record saved : ", timestampValue, new Date(timestampValue).toTimeString(),totalCntValue);
     }); 
 }
@@ -101,7 +102,10 @@ function sendTotal(socket){
     var dateMinutePast = dateNow - (61*1000)
     var totalRecord = [];
 
-    notesReleaseStat.find({ timestamp: { $gt: dateMinutePast, $lte: dateNow } }).sort({"timestamp":-1}).toArray(function (err, items) {
+    notesReleaseStat
+    .find({ timestamp: { $gt: dateMinutePast, $lte: dateNow } })
+    .sort({timestamp:-1})
+    .toArray(function (err, items) {
         if(err){
             console.log("** ERROR [sendTotal]: ", err.message);
             return;
@@ -123,7 +127,11 @@ function sendHourValues(socket){
 
     var hourItems = [];
 
-    notesReleaseStat.find({ timestamp: {$gte: timestampMin } }).sort({"timestamp":-1}).limit(61).toArray(function (err, items) {
+    notesReleaseStat
+    .find({ timestamp: {$gte: timestampMin } })
+    .sort({timestamp:-1})
+    .limit(61)
+    .toArray(function (err, items) {
                 
         for(var i=1; i<61; i++){
             var minuteRangeMin =  dateNow - (60*i*1000);
@@ -145,7 +153,7 @@ function sendHourValues(socket){
 
                     allMinuteItems = items.filter(function( item ) {
                         return (item.timestamp >= minuteRangeMin && item.timestamp <= minuteRangeMax);
-                    }).sort({"timestamp":-1});
+                    }).sort(function(a,b){return a.timestamp < b.timestamp});
 
                     if(allMinuteItems.length == 2){
                         diffMinuteWindowsValue = allMinuteItems[0].windowsCnt - allMinuteItems[1].windowsCnt ;
@@ -178,7 +186,11 @@ function sendDayValues(socket) {
 
     var dayItems = [];
 
-    notesReleaseStat.find({ timestamp: { $gte: timestampMin} }).sort({"timestamp":-1}).limit(25*61).toArray(function (err, items) {
+    notesReleaseStat
+    .find({ timestamp: { $gte: timestampMin} })
+    .sort({timestamp:-1})
+    .limit(25*61)
+    .toArray(function (err, items) {
 
         for(var i=1; i<25; i++){
             var hourRangeMin =  dateNow - (3600*i*1000);
@@ -201,7 +213,7 @@ function sendDayValues(socket) {
 
                     allHourItems = items.filter(function( item ) {
                         return (item.timestamp > hourRangeMin && item.timestamp <= hourRangeMax);
-                    }).sort(function(itemA,itemB){return itemB.timestamp - itemA.timestamp;});
+                    }).sort(function(a,b){return a.timestamp < b.timestamp});
 
                     if(allHourItems.length > 0){
                         hourWindowsValue = allHourItems[0].windowsCnt  - allHourItems[allHourItems.length - 1].windowsCnt ;
@@ -242,8 +254,11 @@ function respondRangeStat(range, socket){
     var numDays = (end-start)/rangeDay;
     var rangeValues = [];
 
-    notesReleaseStat.find({ timestamp: { $gt: start, $lte: end } }).sort({"timestamp":-1}).toArray(function (err, items) {
-        
+    notesReleaseStat
+    .find({ timestamp: { $gt: start, $lte: end } })
+    .sort({"timestamp":-1})
+    .toArray(function (err, items) {
+
         for(var i=0; i<numDays; i++){
 
             var filterDay = function(item){
@@ -294,15 +309,15 @@ db.on('connect', function () {
     })
 
     setInterval(function(){
-            count++;
+        count++;
+        getDataFromGithub();
 
-            getDataFromGithub();
-            sendTotal(io);
-            sendHourValues(io);
-            if(count / 60 === 1){
-                count = 0;
-                sendDayValues(io);
-            }
+        sendTotal(io);
+        sendHourValues(io);
+        if(count / 60 === 1){
+            count = 0;
+            sendDayValues(io);
+        }
     }, 60000);
 })
 
