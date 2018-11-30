@@ -135,7 +135,7 @@ function sendHourValues(socket){
             var diffMinuteTotalValue   = 0;
 
             if(err){
-                console("** ERROR [sendHourValues]: ", err.message);
+                console.log("** ERROR [sendHourValues]: ", err.message);
 
             }else{
 
@@ -193,7 +193,7 @@ function sendDayValues(socket) {
 
             if(err){
                 
-                console("** ERROR [sendDayValues]: ", err.message);
+                console.log("** ERROR [sendDayValues]: ", err.message);
 
             }else{
 
@@ -295,7 +295,7 @@ db.on('connect', function () {
 
     setInterval(function(){
             count++;
-            //console.log(count);
+
             getDataFromGithub();
             sendTotal(io);
             sendHourValues(io);
