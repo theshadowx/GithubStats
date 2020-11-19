@@ -20,7 +20,7 @@ var bodyParser = require('body-parser');
 
 const user = "nuttyartist";
 const repo = "notes";
-const releaseTag = "v1.0.0";
+const releaseTag = "v1.5.0";
 const hostUrl = 'https://api.github.com/repos/'+ user + '/' + repo + '/releases/tags/' + releaseTag;
 
 var previousTotalValue   = 0;
