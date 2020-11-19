@@ -39,7 +39,7 @@ myApp.controller('AppCtrl', ['$scope', '$http', 'socket', '$timeout', '$mdSidena
     $scope.isOpen = false;
 
     $scope.repoName = "Notes";
-    $scope.releaseTag = "v1.0.0";
+    $scope.releaseTag = "v1.5.0";
     $scope.dayDownloads = 0;
     $scope.hourDownloads = 0;
     $scope.totalDownloadsRange = 0;
